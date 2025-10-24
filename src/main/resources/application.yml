@@ -7,4 +7,5 @@ management:
 security:
   require-ssl: true
 
+# SpringのSAMLセキュリティモジュールのログレベルをDEBUGに設定
 logging.level.org.springframework.security.saml: DEBUG

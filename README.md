@@ -1,54 +1,85 @@
-## Spring Security SAML Sample with Spring Boot ##
-This sample uses the plain old spring-security-saml library to add SP capabilities to a Spring Boot app, allowing it to authenticate against different IdPs.
-The main purpose of this module is to expose the extensive configuration required to use Spring Security SAML, in comparison with the `spring-boot-security-saml` plugin for Spring Boot, that deals with all this complexities internally.
+## Spring Bootを使用したSpring Security SAMLサンプル ##
+このサンプルは、従来の`spring-security-saml`ライブラリを使用して、Spring BootアプリにSP（サービスプロバイダ）機能を追加し、さまざまなIdP（IDプロバイダ）に対して認証できるようにします。
+このモジュールの主な目的は、これらすべての複雑さを内部で処理するSpring Boot用の`spring-boot-security-saml`プラグインと比較して、Spring Security SAMLを使用するために必要な広範な設定を公開することです。
 
-### Availabe IdPs ####
+## 動かし方
+
+### ビルド
+
+```bash
+mvn clean install  
+```
+
+以下のようになればOK!
+
+```bash
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  28.153 s
+[INFO] Finished at: 2025-10-24T02:30:38Z
+[INFO] ------------------------------------------------------------------------
+```
+
+### ローカルでサーバー起動
+
+```bash
+java -jar target/spring-security-saml-sample-1.1.0-SNAPSHOT.jar
+```
+
+### 自己署名証明書を作成するコマンド 
+
+- *RSAキーを作成するコマンド*: `openssl genrsa -out localhost.key 2048`
+- *cerファイルを生成するコマンド*: `openssl req -new -x509 -key localhost.key -out localhost.cer -days 365`
+- *derファイルを作成するコマンド*: `openssl pkcs8 -topk8 -nocrypt -in localhost.key -outform DER -out localhost.key.der`
+
+### 利用可能なIdP ####
 
 - [SSO Circle](http://www.ssocircle.com/en/)
 - [OneLogin](https://www.onelogin.com/)
-- [Ping One Clound](https://www.pingidentity.com/en/products/pingone.html)
+- [Ping One Cloud](https://www.pingidentity.com/en/products/pingone.html)
 - [OKTA](https://www.okta.com)
 
-### Credentials ###
+### 認証情報 ###
 
-Use the following credentials:
+以下の認証情報を使用してください：
 
-- *SSO Circle:* Register with [SSO Circle](http://www.ssocircle.com/en/) and use those credentials to login in the application.
-- *OneLogin:* Register with [OneLogin](https://www.onelogin.com/) and use those credentials to login in the application. 
-- *Ping One:* Register with [Ping One Clound](https://www.pingidentity.com/en/products/pingone.html) and use those credentials to login in the application. 
-- *OKTA:* Register with [OKTA](https://www.okta.com) and use those credentials to login in the application. 
+- *SSO Circle:* [SSO Circle](http://www.ssocircle.com/en/)に登録し、その認証情報を使用してアプリケーションにログインします。
+- *OneLogin:* [OneLogin](https://www.onelogin.com/)に登録し、その認証情報を使用してアプリケーションにログインします。
+- *Ping One:* [Ping One Cloud](https://www.pingidentity.com/en/products/pingone.html)に登録し、その認証情報を使用してアプリケーションにログインします。
+- *OKTA:* [OKTA](https://www.okta.com)に登録し、その認証情報を使用してアプリケーションにログインします。
 
-### OneLogin configuration ###
+### OneLoginの設定 ###
 
-To use OneLogin with this sample application, you'll have to:
-- Create an [OneLogin developers account](https://www.onelogin.com/developer-signup)
-- Add a SAML Test Connector (IdP)
-- Configure the OneLogin application with:
-  - *RelayState:* You can use anything here.
+このサンプルアプリケーションでOneLoginを使用するには、次の手順を実行する必要があります：
+- [OneLogin開発者アカウント](https://www.onelogin.com/developer-signup)を作成します。
+- SAMLテストコネクタ（IdP）を追加します。
+- OneLoginアプリケーションを以下のように設定します：
+  - *RelayState:* ここには何でも使用できます。
   - *Audience:* localhost-demo
   - *Recipient:* http://localhost:8080/saml/SSO
   - *ACS (Consumer) URL Validator:* ^http://localhost:8080/saml/SSO.*$
   - *ACS (Consumer) URL:* http://localhost:8080/saml/SSO
   - *Single Logout URL:* http://localhost:8080/saml/SingleLogout
-  - *Parameters:* You can add additional parameters like firstName, lastName.
-- In the SSO tab:
-  - *X.509 Certificate:* Copy-paste the existing X.509 PEM cerficate into idp-onelogin.xml (ds:X509Certificate).
-  - *SAML Signature algorythm:* Use the SHA-256, although SHA-1 will still work.
-  - *Issuer URL:* Replace the entityID in the idp-onelogin.xml with this value.
-  - *SAML 2.0 Endpoint (HTTP):* Replace the location for the HTTP-Redirect and HTTP-POST binding in the idp-onelogin.xml with this value.
-  - *SLO Endpoint (HTTP):* Replace the location for the HTTP-Redirect binding in the idp-onelogin.xml with this value.
+  - *Parameters:* firstName、lastNameなどの追加パラメータを追加できます。
+- SSOタブで：
+  - *X.509 Certificate:* 既存のX.509 PEM証明書をコピーして`idp-onelogin.xml`（ds:X509Certificate）に貼り付けます。
+  - *SAML Signature algorythm:* SHA-256を使用しますが、SHA-1も引き続き機能します。
+  - *Issuer URL:* `idp-onelogin.xml`のentityIDをこの値に置き換えます。
+  - *SAML 2.0 Endpoint (HTTP):* `idp-onelogin.xml`のHTTP-RedirectおよびHTTP-POSTバインディングの場所をこの値に置き換えます。
+  - *SLO Endpoint (HTTP):* `idp-onelogin.xml`のHTTP-Redirectバインディングの場所をこの値に置き換えます。
 
-### Okta login configuration setup
+### Oktaログイン設定 ###
 
-To use okta with this sample applicatio, you'll have to:
-- Create an [Okta developers account](https://www.okta.com)
-- Add a sample saml connector details
-- Configure the okta application with:
+このサンプルアプリケーションでOktaを使用するには、次の手順を実行する必要があります：
+- [Okta開発者アカウント](https://www.okta.com)を作成します。
+- サンプルSAMLコネクタの詳細を追加します。
+- Oktaアプリケーションを以下のように設定します：
   - *Single Sign On URL* `http://localhost:8081/saml/SSO`
   - *Recipient URL* `http://localhost:8081/saml/SSO`
   - *Destination URL* `http://localhost:8081/saml/SSO`
   - *Audience Restriction* `http://localhost:8081/saml/metadata`
-  - *Default Relay State* `Any value can be provided`
+  - *Default Relay State* `任意の値を提供できます`
   - *Name ID Format* `Unspecified`
   - *Response* `Signed`
   - *Assertion Signature* `Signed`
@@ -57,15 +88,9 @@ To use okta with this sample applicatio, you'll have to:
   - *Assertion Encryption* Unencrypted
   - *Single Logout URL* `http://localhost:8081/saml/logout`
   - *SP Issuer* `http://localhost:8081/saml/metadata`
-  - *Signature Certificate* Upload the localhost.cert which is the X509 PEM certificate
+  - *Signature Certificate* X509 PEM証明書である`localhost.cert`をアップロードします。
   - *Authentication context class* `X509 certificate`
   - *Honor Force Authentication* `No`
-  - *SAML Issuer ID* `Default value`
-  - *Paramters* Configure some paramters for display
-- Final generated metadata file should be copy pasted in the idp-okta.xml
-  
-### Commands to create Self signed certificates
-
-- *CMD to create the RSA key*: `openssl genrsa -out localhost.key 2048`
-- *CMD to generate the cer file*: `openssl req -new -x509 -key localhost.key -out localhost.cer -days 365`
-- *CMD to create the der file*: `openssl pkcs8 -topk8 -nocrypt -in localhost.key -outform DER -out localhost.key.der`
+  - *SAML Issuer ID* `デフォルト値`
+  - *Parameters* 表示用にいくつかのパラメータを設定します。
+- 最終的に生成されたメタデータファイルを`idp-okta.xml`にコピー＆ペーストする必要があります。
