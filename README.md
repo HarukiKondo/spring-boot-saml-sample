@@ -53,6 +53,7 @@ java -jar target/spring-security-saml-sample-1.1.0-SNAPSHOT.jar
 
 このサンプルアプリケーションでOneLoginを使用するには、次の手順を実行する必要があります：
 - [OneLogin開発者アカウント](https://www.onelogin.com/developer-signup)を作成します。
+  - フリートライアルは30日間有効
 - SAMLテストコネクタ（IdP）を追加します。
 - OneLoginアプリケーションを以下のように設定します：
   - *RelayState:* ここには何でも使用できます。
